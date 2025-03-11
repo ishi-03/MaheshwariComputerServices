@@ -1,0 +1,32 @@
+import mongoose from "mongoose";
+//how our user looks like
+const userSchema = mongoose.Schema({
+    username: {
+    type:String,
+    required:true,
+    },
+
+    email:{
+        type:String,
+        required:true,
+        unique:true,
+    },
+    
+    password:{
+        type:String,
+        required:true,
+    },
+    isAdmin:{
+        type: Boolean,
+        required:true,
+        default:false,
+    }
+
+},
+{timestamps: true}//it will give us time when user is created or deleted
+);
+
+//user creation
+
+const User = mongoose.model('User',userSchema)
+export default User;
