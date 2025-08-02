@@ -1,6 +1,5 @@
 import User from "../models/userModels.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
-// import bcrypt from "../../node_modules/bcryptjs/dist/bcrypt.js"
 import bcrypt from "bcryptjs";
 import createToken from "../utils/createToken.js";
 
@@ -95,15 +94,31 @@ const getCurrentUserProfile = asyncHandler(async (req, res) => {
 });
 const updateCurrentUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
+
   if (user) {
-    user.username = req.body.username || user.username; //if user dont update we are using old username
-    user.email = req.body.email || user.email; //if user dont update we are using old username
-    if (req.body.password) {
+    const { username, email, password, currentPassword } = req.body;
+
+    user.username = username || user.username;
+    user.email = email || user.email;
+
+    if (password) {
+      if (!currentPassword) {
+        res.status(400);
+        throw new Error("Current password is required to change password");
+      }
+
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) {
+        res.status(401);
+        throw new Error("Incorrect current password");
+      }
+
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(req.body.password, salt);
-      user.password = hashedPassword;
+      user.password = await bcrypt.hash(password, salt);
     }
+
     const updatedUser = await user.save();
+
     res.json({
       _id: updatedUser._id,
       username: updatedUser.username,
@@ -112,9 +127,10 @@ const updateCurrentUserProfile = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(404);
-    throw new Error("User not found!!!");
+    throw new Error("User not found");
   }
 });
+
 const deleteUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
   if (user) {

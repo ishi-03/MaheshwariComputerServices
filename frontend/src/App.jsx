@@ -1,16 +1,18 @@
 import { Outlet } from "react-router-dom";
-import Navigation from "./pages/auth/Navigation";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MainHeader from "./components/MainHeader";
+import Footer from "./components/Footer";
 
 function App() {
   return (
     <>
       <ToastContainer />
-      <Navigation />
+      <MainHeader/>
       <main className="py-3">
         <Outlet />
       </main>
+      <Footer/>
     </>
   );
 }

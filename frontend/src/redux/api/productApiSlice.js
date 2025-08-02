@@ -3,6 +3,7 @@ import { apiSlice } from "./apiSlice";
 
 export const productApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+
     getProducts: builder.query({
       query: ({ keyword }) => ({
         url: `${PRODUCT_URL}`,
@@ -17,6 +18,8 @@ export const productApiSlice = apiSlice.injectEndpoints({
       providesTags: (result, error, productId) => [
         { type: "Product", id: productId },
       ],
+      keepUnusedDataFor: 0,
+      refetchOnMountOrArgChange: true,
     }),
 
     allProducts: builder.query({
@@ -36,17 +39,18 @@ export const productApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: productData,
       }),
-      invalidatesTags: ["Product"],
+      invalidatesTags: ["Product", "FilteredProducts"],
     }),
 
-    updateProduct: builder.mutation({
-      query: ({ productId, formData }) => ({
-        url: `${PRODUCT_URL}/${productId}`,
-        method: "PUT",
-        body: formData,
-      }),
-      invalidatesTags: ["Product"],
-    }),
+  updateProduct: builder.mutation({
+  query: ({ productId, formData }) => ({
+    url: `${PRODUCT_URL}/${productId}`,
+    method: "PUT",
+    body: formData,
+    formData: true, 
+  }),
+  invalidatesTags: ["Product", "Products", "FilteredProducts"], 
+}),
 
     uploadProductImage: builder.mutation({
       query: (data) => ({
@@ -61,7 +65,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         url: `${PRODUCT_URL}/${productId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Product"],
+      invalidatesTags: ["Product", "FilteredProducts"],
     }),
 
     createReview: builder.mutation({
@@ -84,12 +88,25 @@ export const productApiSlice = apiSlice.injectEndpoints({
     }),
 
     getFilteredProducts: builder.query({
-      query: ({ checked, radio }) => ({
+      query: ({ checked, radio, brands }) => ({
         url: `${PRODUCT_URL}/filtered-products`,
         method: "POST",
-        body: { checked, radio },
+        body: { checked, radio, brands },
       }),
+      keepUnusedDataFor: 5,
+      refetchOnMountOrArgChange: true,
+      providesTags: (result, error, { checked, radio, brands }) => [
+        {
+          type: "FilteredProducts",
+          id: `${checked?.join("-") || "none"}_${radio?.join("-") || "none"}_${brands?.join("-") || "none"}`,
+        },
+      ],
     }),
+
+    getProductEnums: builder.query({
+      query: () => `${PRODUCT_URL}/enums`,
+    }),
+
   }),
 });
 
@@ -106,4 +123,5 @@ export const {
   useGetNewProductsQuery,
   useUploadProductImageMutation,
   useGetFilteredProductsQuery,
+  useGetProductEnumsQuery,
 } = productApiSlice;
