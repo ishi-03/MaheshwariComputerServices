@@ -5,7 +5,6 @@ import { Link } from "react-router";
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
 const Profile = () => {
-  // Mock data for demonstration - replace with your actual Redux logic
   const [username, setUserName] = useState("John Doe");
   const [email, setEmail] = useState("john.doe@example.com");
   const [password, setPassword] = useState("");

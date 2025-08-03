@@ -15,7 +15,6 @@ import AdminRoute from "./pages/admin/AdminRoute.jsx";
 // pages
 import Login from "./pages/auth/Login.jsx";
 import Register from "./pages/auth/Register.jsx";
-import Profile from "./pages/user/Profile.jsx";
 import UserOrder from "./pages/User/UserOrder.jsx";
 import Order from "./pages/Orders/Order.jsx";
 import Shipping from "./pages/Orders/Shipping.jsx";
@@ -43,6 +42,7 @@ import PrivacyPolicy from "./pages/admin/helps/PrivacyPolicy.jsx";
 import RefundPolicy from "./pages/admin/helps/RefundPolicy.jsx";
 import ShippingPolicy from "./pages/admin/helps/ShippingPolicy.jsx";
 import TermsAndConditions from "./pages/admin/helps/TermsnConditions.jsx";
+import Profile from "./pages/User/Profile.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -60,7 +60,7 @@ const router = createBrowserRouter(
 
       {/* Private Routes */}
       <Route path="" element={<PrivateRoute />}>
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile/>} />
         <Route path="/shipping" element={<Shipping />} />
         <Route path="/placeorder" element={<PlaceOrder />} />
         <Route path="/order/:id" element={<Order />} />
