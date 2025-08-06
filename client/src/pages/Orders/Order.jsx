@@ -50,8 +50,7 @@ const Order = () => {
       }
 
       // ✅ Fetch Razorpay Key from backend
-      const { data: { key } } = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/config/razorpay`);
-`${import.meta.env.VITE_API_BASE_URL}/api/products`
+      const { data: { key } } = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/config/razorpay`);
       const amountInPaise = Math.round(order.totalPrice * 100);
       const { data: razorpayOrder } = await createRazorpayOrder({ amount: amountInPaise });
 
