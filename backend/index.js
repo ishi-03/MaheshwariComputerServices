@@ -22,6 +22,7 @@ import restockRoutes from './routes/restockRoutes.js';
 import expressFormidable from "express-formidable";
 
 import configRoutes from "./routes/configRoutes.js"; 
+import cors from "cors";
 
 
 
@@ -36,6 +37,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(expressFormidable());
+app.use(
+  cors({
+    origin: ["https://maheshwari-computer-services.vercel.app"], 
+    credentials: true
+  })
+);
 
 app.use("/api/users", userRoutes);
 app.use("/api/category", categoryRoutes);
