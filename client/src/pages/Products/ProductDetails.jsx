@@ -149,7 +149,9 @@ const submitHandler = async (e) => {
       ) : error ? (
         <div className="max-w-6xl mx-auto px-4 py-8">
           <Message variant="danger">
-            {error?.data?.message || error.message}
+            {error?.data?.message || error?.message || "Something went wrong"
+ || "Something went wrong"
+}
           </Message>
         </div>
       ) : (

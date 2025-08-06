@@ -59,7 +59,9 @@ const updateCategory = asyncHandler(async (req, res) => {
       res.json(all);
     } catch (error) {
       console.log(error);
-      return res.status(400).json(error.message);
+      return res.status(400).json(error?.message || "Something went wrong"
+ || "Something went wrong"
+);
     }
   });
   
@@ -69,7 +71,9 @@ const updateCategory = asyncHandler(async (req, res) => {
       res.json(category);
     } catch (error) {
       console.log(error);
-      return res.status(400).json(error.message);
+      return res.status(400).json(error?.message || "Something went wrong"
+ || "Something went wrong"
+);
     }
   });
 

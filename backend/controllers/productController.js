@@ -381,7 +381,9 @@ const addProductReview = asyncHandler(async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(400).json(error.message);
+    res.status(400).json(error?.message || "Something went wrong"
+ || "Something went wrong"
+);
   }
 });
 
@@ -391,7 +393,9 @@ const fetchTopProducts = asyncHandler(async (req, res) => {
     res.json(products);
   } catch (error) {
     console.error(error);
-    res.status(400).json(error.message);
+    res.status(400).json(error?.message || "Something went wrong"
+ || "Something went wrong"
+);
   }
 });
 
@@ -401,7 +405,9 @@ const fetchNewProducts = asyncHandler(async (req, res) => {
     res.json(products);
   } catch (error) {
     console.error(error);
-    res.status(400).json(error.message);
+    res.status(400).json(error?.message || "Something went wrong"
+ || "Something went wrong"
+);
   }
 });
 

@@ -24,8 +24,12 @@ const createRazorpayOrder = async (req, res) => {
     const order = await razorpay.orders.create(options);
     res.status(200).json(order);
   } catch (error) {
-    console.error("💥 Razorpay Create Order Error:", error.message);
-    res.status(500).json({ error: error.message });
+    console.error("💥 Razorpay Create Order Error:", error?.message || "Something went wrong"
+ || "Something went wrong"
+);
+    res.status(500).json({ error: error?.message || "Something went wrong"
+ || "Something went wrong"
+ });
   }
 };
 
@@ -58,8 +62,12 @@ const verifyRazorpayPayment = async (req, res) => {
     res.status(200).json({ success: true, order: updatedOrder });
 
   } catch (error) {
-    console.error("💥 Verify Razorpay Error:", error.message);
-    res.status(500).json({ success: false, message: error.message });
+    console.error("💥 Verify Razorpay Error:", error?.message || "Something went wrong"
+ || "Something went wrong"
+);
+    res.status(500).json({ success: false, message: error?.message || "Something went wrong"
+ || "Something went wrong"
+ });
   }
 };
 

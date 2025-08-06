@@ -86,7 +86,9 @@ const createOrder = async (req, res) => {
     const createdOrder = await order.save();
     res.status(201).json(createdOrder);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error?.message || "Something went wrong"
+ || "Something went wrong"
+ });
   }
 };
 
@@ -95,7 +97,9 @@ const getAllOrders = async (req, res) => {
     const orders = await Order.find({}).populate("user", "id username");
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error?.message || "Something went wrong"
+ || "Something went wrong"
+ });
   }
 };
 
@@ -104,7 +108,9 @@ const getUserOrders = async (req, res) => {
     const orders = await Order.find({ user: req.user._id });
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error?.message || "Something went wrong"
+ || "Something went wrong"
+ });
   }
 };
 
@@ -113,7 +119,9 @@ const countTotalOrders = async (req, res) => {
     const totalOrders = await Order.countDocuments();
     res.json({ totalOrders });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error?.message || "Something went wrong"
+ || "Something went wrong"
+ });
   }
 };
 
@@ -123,7 +131,9 @@ const calculateTotalSales = async (req, res) => {
     const totalSales = orders.reduce((sum, order) => sum + order.totalPrice, 0);
     res.json({ totalSales });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error?.message || "Something went wrong"
+ || "Something went wrong"
+ });
   }
 };
 
@@ -144,7 +154,9 @@ const calcualteTotalSalesByDate = async (req, res) => {
     ]);
     res.json(salesByDate);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error?.message || "Something went wrong"
+ || "Something went wrong"
+ });
   }
 };
 
@@ -162,7 +174,9 @@ const findOrderById = async (req, res) => {
       throw new Error("Order not found");
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error?.message || "Something went wrong"
+ || "Something went wrong"
+ });
   }
 };
 
@@ -187,7 +201,9 @@ const markOrderAsPaid = async (req, res) => {
       throw new Error("Order not found");
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error?.message || "Something went wrong"
+ || "Something went wrong"
+ });
   }
 };
 
@@ -205,7 +221,9 @@ const markOrderAsDelivered = async (req, res) => {
       throw new Error("Order not found");
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error?.message || "Something went wrong"
+ || "Something went wrong"
+ });
   }
 };
 
