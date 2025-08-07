@@ -16,7 +16,7 @@ import {
 import { useState } from "react";
 // import AdminProductUpdate from "./ProductUpdate";
 const AllProducts = () => {
-  const { data: products, isLoading, isError } = useAllProductsQuery();
+  const { data: products, isLoading, error } = useAllProductsQuery();
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [viewMode, setViewMode] = useState("grid");
@@ -50,7 +50,7 @@ const AllProducts = () => {
     );
   }
 
-  if (isError) {
+  if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 to-white flex items-center justify-center">
         <div className="bg-white border-l-4 border-red-500 rounded-lg shadow-xl p-8 text-center max-w-md">
