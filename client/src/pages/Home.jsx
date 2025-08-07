@@ -24,7 +24,7 @@ const Home = () => {
             <p className="text-gray-500 mt-4">Loading amazing products...</p>
           </div>
         </div>
-      ) : isError ? (
+      ) : error ? (
         <div className="flex justify-center items-center min-h-[60vh]">
           <div className="bg-red-50 border border-red-200 rounded-2xl p-8">
             <Message variant="danger">
