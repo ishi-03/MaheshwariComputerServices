@@ -15,7 +15,7 @@ import {
 
 const Order = () => {
   const { id: orderId } = useParams();
-  const { data: order, refetch, isLoading, error } = useGetOrderDetailsQuery(orderId);
+  const { data: order, refetch, isLoading, error,isError } = useGetOrderDetailsQuery(orderId);
   const [deliverOrder, { isLoading: loadingDeliver }] = useDeliverOrderMutation();
   const [createRazorpayOrder] = useCreateRazorpayOrderMutation();
   const [verifyRazorpayPayment] = useVerifyRazorpayPaymentMutation();

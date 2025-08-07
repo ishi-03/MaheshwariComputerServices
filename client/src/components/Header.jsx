@@ -4,10 +4,24 @@ import SmallProduct from "../pages/Products/SmallProduct";
 import ProductCarousel from "../pages/Products/ProductCarousel";
 
 const Header = () => {
-  const { data, isLoading, error } = useGetTopProductsQuery();
+  const { data, isLoading, error, isError } = useGetTopProductsQuery();
 
   if (isLoading) return <Loader />;
-  if (error) return <h1 className="text-red-600 font-bold text-xl">ERROR</h1>;
+  if (isError || !data) {
+    return (
+      <h1 className="text-red-600 font-bold text-xl">
+        Failed to load top products
+      </h1>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <h1 className="text-gray-600 font-bold text-xl">
+        No top products available yet
+      </h1>
+    );
+  }
 
   return (
     <div className="flex justify-end pr-10 pt-8">
@@ -19,7 +33,7 @@ const Header = () => {
         </div>
       </div>
 
-      <ProductCarousel  />
+      <ProductCarousel />
     </div>
   );
 };

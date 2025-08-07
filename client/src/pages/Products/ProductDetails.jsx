@@ -47,7 +47,7 @@ const ProductDetails = () => {
     data: product,
     isLoading,
     refetch,
-    error,
+    error,isError
   } = useGetProductDetailsQuery(productId);
 
   const { userInfo } = useSelector((state) => state.auth);

@@ -9,7 +9,7 @@ import moment from "moment";
 import { FaBox, FaClock, FaStar, FaStore } from "react-icons/fa";
 
 const ProductCarousel = () => {
-  const { data: products, isLoading, error } = useGetTopProductsQuery();
+  const { data: products, isLoading, error ,isError} = useGetTopProductsQuery();
 
   const settings = {
     dots: true,

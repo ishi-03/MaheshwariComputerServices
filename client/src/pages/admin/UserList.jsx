@@ -10,7 +10,7 @@ import {
 import Message from "../../components/Message";
 
 const UserList = () => {
-  const { data: users, refetch, isLoading, error } = useGetUsersQuery();
+  const { data: users, refetch, isLoading, error,isError } = useGetUsersQuery();
 
   const [deleteUser] = useDeleteUserMutation();
 

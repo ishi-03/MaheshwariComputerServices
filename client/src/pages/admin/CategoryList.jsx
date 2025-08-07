@@ -20,7 +20,7 @@ import {
 } from "react-icons/fa";
 
 const CategoryList = () => {
-  const { data: categories, isLoading, error } = useFetchCategoriesQuery();
+  const { data: categories, isLoading, error,isError } = useFetchCategoriesQuery();
   const [name, setName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [updatingName, setUpdatingName] = useState("");

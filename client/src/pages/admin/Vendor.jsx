@@ -17,7 +17,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 const Vendor = () => {
   const navigate = useNavigate();
   const { data: vendors } = useFetchVendorsQuery();
-  const { data: history, isLoading, error } = useGetAllRestockHistoryQuery();
+  const { data: history, isLoading, error,isError } = useGetAllRestockHistoryQuery();
 
   const [form, setForm] = useState({ username: "", email: "" });
   const [selectedVendor, setSelectedVendor] = useState(null);

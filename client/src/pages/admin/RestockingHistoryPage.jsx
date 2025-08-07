@@ -6,7 +6,7 @@ import {
 } from "../../redux/api/restockApiSlice";
 
 const RestockHistoryPage = () => {
-  const { data: history = [], isLoading, error, refetch } = useGetAllRestockHistoryQuery();
+  const { data: history = [], isLoading, error, refetch,isError } = useGetAllRestockHistoryQuery();
   const [updateRestockHistory] = useUpdateRestockHistoryMutation();
   const [deleteRestockHistory] = useDeleteRestockHistoryMutation();
 

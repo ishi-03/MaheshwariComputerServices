@@ -3,7 +3,7 @@ import { useGetOrderDetailsQuery } from "../../../redux/api/orderApiSlice.js";
 
 const TrackPage = () => {
   const { orderId } = useParams();
-  const { data: order, isLoading, error } = useGetOrderDetailsQuery(orderId);
+  const { data: order, isLoading, error,isError } = useGetOrderDetailsQuery(orderId);
 
   if (isLoading) {
     return (

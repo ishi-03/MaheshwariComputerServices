@@ -16,7 +16,7 @@ import {
 import { useState } from "react";
 // import AdminProductUpdate from "./ProductUpdate";
 const AllProducts = () => {
-  const { data: products, isLoading, error } = useAllProductsQuery();
+  const { data: products, isLoading, error ,isError} = useAllProductsQuery();
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [viewMode, setViewMode] = useState("grid");

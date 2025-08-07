@@ -16,7 +16,7 @@ const groupProductsByCategory = (products) => {
 
 const VendorDetail = () => {
   const { id } = useParams();
-  const { data, isLoading, error, refetch } = useGetVendorDetailsQuery(id);
+  const { data, isLoading, error, refetch,isError } = useGetVendorDetailsQuery(id);
   const [restockQuantity, setRestockQuantity] = useState({});
   const [restockProduct] = useRestockProductMutation();
 
