@@ -25,9 +25,9 @@ const ProductCarousel = () => {
   return (
     <div className="w-[60%] bg-white rounded-xl shadow-lg p-6">
       {isLoading ? null : error ? (
-        <Message variant="danger">
-          {error?.data?.message || error.error}
-        </Message>
+      <Message variant="danger">
+  {error?.data?.message || error?.error || "Something went wrong."}
+</Message>
       ) : (
         <Slider {...settings}>
           {products.map((product) => (

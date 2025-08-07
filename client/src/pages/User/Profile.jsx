@@ -210,8 +210,9 @@ const Profile = () => {
       {loadingOrders ? (
         <Loader />
       ) : errorOrders ? (
-        <Message variant="danger">{errorOrders?.data?.message || errorOrders.error}</Message>
-      ) : orders.length === 0 ? (
+<Message variant="danger">
+  {error?.data?.message || error?.error || "Something went wrong."}
+</Message>      ) : orders.length === 0 ? (
         <Message>No orders found</Message>
       ) : (
         <div className="overflow-x-auto">

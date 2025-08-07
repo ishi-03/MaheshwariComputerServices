@@ -78,8 +78,8 @@ const submitHandler = async (e) => {
     const msg =
       err?.data?.message ||
       err?.data ||
-      err.error ||
-      err.message ||
+      err?.error ||
+      err?.message ||
       "Failed to submit review";
     toast.error(msg);
   }
@@ -148,11 +148,9 @@ const submitHandler = async (e) => {
         </div>
       ) : error ? (
         <div className="max-w-6xl mx-auto px-4 py-8">
-          <Message variant="danger">
-            {error?.data?.message || error?.message || "Something went wrong"
- || "Something went wrong"
-}
-          </Message>
+         <Message variant="danger">
+  {error?.data?.message || error?.error || "Something went wrong."}
+</Message>
         </div>
       ) : (
         <div className="max-w-6xl mx-auto px-4 py-8">
