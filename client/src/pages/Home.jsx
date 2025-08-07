@@ -7,7 +7,7 @@ import Product from "./Products/Product";
 
 const Home = () => {
   const { keyword } = useParams();
-  const { data, isLoading, isError } = useGetProductsQuery({ keyword });
+  const { data, isLoading, error } = useGetProductsQuery({ keyword });
 
   return (
     <>
@@ -28,8 +28,8 @@ const Home = () => {
         <div className="flex justify-center items-center min-h-[60vh]">
           <div className="bg-red-50 border border-red-200 rounded-2xl p-8">
             <Message variant="danger">
-              {isError?.data.message || isError.error}
-            </Message>
+  {error?.data?.message || error?.error || "Something went wrong."}
+</Message>
           </div>
         </div>
       ) : (

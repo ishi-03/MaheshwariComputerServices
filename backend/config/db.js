@@ -6,9 +6,7 @@ const connectDB = async () => {
         console.log("successfully connected")
 
     } catch(error){
-        console.log(`ERROR: ${error?.message || "Something went wrong"
- || "Something went wrong"
-}`)
+        console.log(`ERROR: ${error?.message || "Something went wrong"}`)
         process.exit(1)
     }
 } 

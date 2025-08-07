@@ -72,7 +72,7 @@ const ContactUs = () => {
             <h3 className="font-semibold text-gray-900 mb-2">Call Us Direct</h3>
             <p className="text-gray-600 text-sm mb-3">Speak with our experts</p>
             <a 
-              href="tel:9414173244" 
+              href="tel:+919414173244" 
               className="text-red-600 font-semibold hover:text-red-700 transition-colors flex items-center gap-1"
             >
               +91 94141 73244

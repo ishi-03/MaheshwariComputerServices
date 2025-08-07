@@ -114,8 +114,8 @@ const UserList = () => {
         ) : error ? (
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <Message variant="danger">
-              {error?.data?.message || error.error}
-            </Message>
+  {error?.data?.message || error?.error || "Something went wrong."}
+</Message>
           </div>
         ) : (
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">

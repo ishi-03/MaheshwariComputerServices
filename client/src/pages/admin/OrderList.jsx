@@ -100,7 +100,9 @@ const OrderList = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 to-white flex items-center justify-center p-4">
-        <Message variant="danger">{error?.data?.message || error.error}</Message>
+{error && typeof error === "object" && "message" in error && (
+  <Message variant="danger">{error.message}</Message>
+)}
       </div>
     );
   }

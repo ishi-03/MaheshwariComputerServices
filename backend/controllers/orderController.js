@@ -87,7 +87,6 @@ const createOrder = async (req, res) => {
     res.status(201).json(createdOrder);
   } catch (error) {
     res.status(500).json({ error: error?.message || "Something went wrong"
- || "Something went wrong"
  });
   }
 };
@@ -175,7 +174,6 @@ const findOrderById = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: error?.message || "Something went wrong"
- || "Something went wrong"
  });
   }
 };
