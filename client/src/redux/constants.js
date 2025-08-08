@@ -1,10 +1,6 @@
-const rawBaseUrl = import.meta.env.VITE_API_URL;
+const rawBaseUrl = import.meta.env.VITE_API_URL ?? "";
 
-console.log("VITE_API_URL =", rawBaseUrl);
-
-if (!rawBaseUrl) {
-  throw new Error("VITE_API_URL is not defined in environment variables.");
-}
+console.log("🔥 VITE_API_URL =", rawBaseUrl); // Now this will definitely run
 
 export const BASE_URL = rawBaseUrl.endsWith("/")
   ? rawBaseUrl.slice(0, -1)
