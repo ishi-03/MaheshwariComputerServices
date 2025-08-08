@@ -98,6 +98,7 @@ const router = createBrowserRouter(
     </Route>
   )
 );
+console.log("ENV VAR:", import.meta.env.VITE_API_URL);
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
