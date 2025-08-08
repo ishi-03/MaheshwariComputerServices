@@ -1,5 +1,9 @@
 // remove trailing slash if exists
-const rawBaseUrl = import.meta.env.VITE_API_URL ?? "";
+const rawBaseUrl = import.meta.env.VITE_API_URL;
+
+if (!rawBaseUrl) {
+  throw new Error("VITE_API_URL is not defined in environment variables.");
+}
 
 export const BASE_URL = rawBaseUrl.endsWith("/")
   ? rawBaseUrl.slice(0, -1)
