@@ -37,12 +37,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(expressFormidable());
-app.use(
-  cors({
-    origin: ["https://maheshwari-computer-services.vercel.app"], 
-    credentials: true
-  })
-);
+app.use(cors({
+  origin: "https://wholesalefrontend-w0sm.onrender.com", // your frontend Render URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 app.use("/api/users", userRoutes);
 app.use("/api/category", categoryRoutes);
