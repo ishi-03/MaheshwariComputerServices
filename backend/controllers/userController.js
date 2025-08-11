@@ -16,10 +16,13 @@ const createUser = asyncHandler(async (req, res) => {
   if (userExists) {
     return res.status(400).json({ message: "User already exists" });
   }
+    console.log("✅ No duplicate user, proceeding...");
+
 
   // 3. Hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
+  console.log("✅ Password hashed");
 
   // 4. Create new user
   const newUser = new User({
@@ -30,9 +33,11 @@ const createUser = asyncHandler(async (req, res) => {
 
   try {
     const savedUser = await newUser.save();
+    console.log("✅ User saved");
 
     // 5. Create token
     createToken(res, savedUser._id);
+    console.log("✅ Token created");
 
     // 6. Send success response
     return res.status(201).json({
@@ -40,7 +45,11 @@ const createUser = asyncHandler(async (req, res) => {
       username: savedUser.username,
       email: savedUser.email,
       isAdmin: savedUser.isAdmin,
-    });
+
+    })
+    
+    ;
+
   } catch (error) {
     console.error("❌ Error creating user:", error);
     return res.status(500).json({ message: "Server error while creating user" });
@@ -67,9 +76,9 @@ const loginUser = asyncHandler(async (req, res) => {
       });
       return; //exit func  after sending resonding
     }
-    else{
+    else {
       res.status(400);
-    throw new Error("Invalid password");
+      throw new Error("Invalid password");
 
     }
   }
