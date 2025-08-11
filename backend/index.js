@@ -38,9 +38,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(expressFormidable());
 app.use(cors({
-  origin: "https://wholesalefrontend-w0sm.onrender.com",  "http://localhost:5173",
+  origin: ["https://wholesalefrontend-w0sm.onrender.com",  "http://localhost:5173"],
  // your frontend Render URL
-  methods: ["GET", "POST", "PUT", "DELETE"],
+methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true
 }));
 
