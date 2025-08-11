@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 import expressFormidable from "express-formidable";
 import cors from "cors";
 
-// utils
+// utiles
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
@@ -17,26 +17,33 @@ import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import vendorRoutes from "./routes/vendorRoutes.js";
-import restockRoutes from "./routes/restockRoutes.js";
+import restockRoutes from './routes/restockRoutes.js';
 import configRoutes from "./routes/configRoutes.js";
 
 const port = process.env.PORT || 5000;
 
-// connect to DB
+// Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// Middleware
+// Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(expressFormidable());
 
-// ✅ TEST MODE: Allow all origins
+// ✅ CORS for testing — works with your Render frontend
 app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+  origin: "https://wholesalefrontend-w0sm.onrender.com", // frontend Render URL
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  credentials: true // allow cookies/auth headers if needed
+}));
+
+// Handle preflight requests
+app.options('*', cors({
+  origin: "https://wholesalefrontend-w0sm.onrender.com",
+  credentials: true
 }));
 
 // Routes
@@ -46,14 +53,14 @@ app.use("/api/products", productRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/vendor", vendorRoutes);
-app.use("/api/restock", restockRoutes);
+app.use('/api/restock', restockRoutes);
 app.use("/api/config", configRoutes);
 
-// Static uploads folder
+// Static uploads
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Production mode
+// Serve frontend in production
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "client", "dist")));
   app.get("*", (req, res) =>
@@ -61,10 +68,9 @@ if (process.env.NODE_ENV === "production") {
   );
 }
 
-// Root route
+// Test route
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Start server
-app.listen(port, () => console.log(`🚀 Server running on port: ${port}`));
+app.listen(port, () => console.log(`Server running on port: ${port}`));
