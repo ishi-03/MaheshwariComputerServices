@@ -31,13 +31,12 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(expressFormidable());
+// app.use(expressFormidable());
 
-// ✅ CORS for testing — works with your Render frontend
 app.use(cors({
-  origin: "https://wholesalefrontend-w0sm.onrender.com", // frontend Render URL
+  origin: "https://wholesalefrontend-w0sm.onrender.com", 
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  credentials: true // allow cookies/auth headers if needed
+  credentials: true 
 }));
 
 // Handle preflight requests
