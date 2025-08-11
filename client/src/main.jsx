@@ -5,12 +5,12 @@ import { Route, RouterProvider, createRoutesFromElements } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store.js";
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 import TrackPage from "./pages/admin/helps/TrackPage.jsx";
 // auth & private
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import AdminRoute from "./pages/admin/AdminRoute.jsx";
-              import EnterTracking from "./pages/admin/helps/EnterTracking.jsx";
+import EnterTracking from "./pages/admin/helps/EnterTracking.jsx";
 
 // pages
 import Login from "./pages/auth/Login.jsx";
@@ -60,7 +60,7 @@ const router = createBrowserRouter(
 
       {/* Private Routes */}
       <Route path="" element={<PrivateRoute />}>
-        <Route path="/profile" element={<Profile/>} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/shipping" element={<Shipping />} />
         <Route path="/placeorder" element={<PlaceOrder />} />
         <Route path="/order/:id" element={<Order />} />
@@ -82,16 +82,16 @@ const router = createBrowserRouter(
         <Route path="/admin/restock-history" element={<RestockHistoryPage />} />
 
       </Route>
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/track/:orderId" element={<TrackPage />} />
-              
-
-<Route path="/refund-policy" element={<RefundPolicy/>} />
-<Route path="/shipping-policy" element={<ShippingPolicy/>} />
-<Route path="/terms" element={<TermsAndConditions/>} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/track/:orderId" element={<TrackPage />} />
 
 
-<Route path="/enter-tracking" element={<EnterTracking />} />
+      <Route path="/refund-policy" element={<RefundPolicy />} />
+      <Route path="/shipping-policy" element={<ShippingPolicy />} />
+      <Route path="/terms" element={<TermsAndConditions />} />
+
+
+      <Route path="/enter-tracking" element={<EnterTracking />} />
 
 
 

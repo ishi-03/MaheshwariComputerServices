@@ -6,38 +6,47 @@ import createToken from "../utils/createToken.js";
 const createUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
+  // 1. Check required fields
   if (!username || !email || !password) {
-    throw new Error("Please fill all inputs.");
+    return res.status(400).json({ message: "Please fill all inputs" });
   }
 
-  // for not reusing email
+  // 2. Check for existing user by email
   const userExists = await User.findOne({ email });
-  if (userExists) res.status(400).send("User already Exists");
+  if (userExists) {
+    return res.status(400).json({ message: "User already exists" });
+  }
 
-  // this salt is added to password so that it cannot be recognized
+  // 3. Hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
+
+  // 4. Create new user
   const newUser = new User({
     username,
     email,
     password: hashedPassword,
-  }); //this is the user from user schema
+  });
 
   try {
-    await newUser.save(); //it is a mongoose method which allows to save user in database,use can check all user details in mongodb of vs code
-    createToken(res, newUser._id);
+    const savedUser = await newUser.save();
 
-    res.status(201).json({
-      _id: newUser._id,
-      username: newUser.username,
-      email: newUser.email,
-      isAdmin: newUser.isAdmin,
+    // 5. Create token
+    createToken(res, savedUser._id);
+
+    // 6. Send success response
+    return res.status(201).json({
+      _id: savedUser._id,
+      username: savedUser.username,
+      email: savedUser.email,
+      isAdmin: savedUser.isAdmin,
     });
   } catch (error) {
-    res.status(400);
-    throw new Error("Invalid user data");
+    console.error("❌ Error creating user:", error);
+    return res.status(500).json({ message: "Server error while creating user" });
   }
 });
+
 
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
