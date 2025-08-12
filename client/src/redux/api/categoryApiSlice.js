@@ -9,6 +9,9 @@ export const categoryApiSlice = apiSlice.injectEndpoints({
         url: `${CATEGORY_URL}`,
         method: "POST",
         body: newCategory,
+          credentials: "include", // VERY IMPORTANT
+
+
       }),
     }),
 
