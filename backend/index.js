@@ -39,11 +39,7 @@ app.use(cors({
   credentials: true 
 }));
 
-// Handle preflight requests
-app.options('*', cors({
-  origin: "https://wholesalefrontend-w0sm.onrender.com",
-  credentials: true
-}));
+
 
 // Routes
 app.use("/api/users", userRoutes);
