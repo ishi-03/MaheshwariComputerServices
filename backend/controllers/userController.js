@@ -16,7 +16,7 @@ const createUser = asyncHandler(async (req, res) => {
   if (userExists) {
     return res.status(400).json({ message: "User already exists" });
   }
-    console.log("✅ No duplicate user, proceeding...");
+  console.log("✅ No duplicate user, proceeding...");
 
 
   // 3. Hash password
@@ -29,6 +29,8 @@ const createUser = asyncHandler(async (req, res) => {
     username,
     email,
     password: hashedPassword,
+    isAdmin: Boolean(isAdmin),
+
   });
 
   try {
@@ -47,8 +49,8 @@ const createUser = asyncHandler(async (req, res) => {
       isAdmin: savedUser.isAdmin,
 
     })
-    
-    ;
+
+      ;
 
   } catch (error) {
     console.error("❌ Error creating user:", error);
