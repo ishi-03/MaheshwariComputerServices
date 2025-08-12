@@ -22,4 +22,4 @@ router
 router.route("/categories").get(listCategory);
 router.route("/:id").get(readCategory);
   
-export default router;
+export default router;
