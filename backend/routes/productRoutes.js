@@ -25,6 +25,10 @@ const uploadForm = formidable({
   keepExtensions: true,
 });
 
+app.use((req, res, next) => {
+  console.log("Incoming cookies:", req.cookies);
+  next();
+});
 
 
 router.route("/enums").get(getProductEnums); // ✅ New route
