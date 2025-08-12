@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import createToken from "../utils/createToken.js";
 
 const createUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password,isAdmin } = req.body;
 
   // 1. Check required fields
   if (!username || !email || !password) {
