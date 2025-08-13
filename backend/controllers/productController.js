@@ -16,10 +16,14 @@ const persistImages = async (tmpPaths) => {
       const fileName = `image-${Date.now()}-${Math.round(Math.random() * 1e6)}${ext}`;
       const dest = path.join(uploadDir, fileName);
       await fs.move(tmp, dest, { overwrite: true });
-      return `/uploads/${fileName}`;
+
+      // Save full backend URL for production
+      const backendUrl = process.env.BASE_URL || "https://maheshwaricomputerservices.onrender.com";
+      return `${backendUrl}/uploads/${fileName}`;
     })
   );
 };
+
 
 /*──────────────────────────
   ➕ ADD PRODUCT
