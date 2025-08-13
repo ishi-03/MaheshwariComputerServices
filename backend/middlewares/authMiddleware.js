@@ -4,6 +4,9 @@ import asyncHandler from "./asyncHandler.js";
 
 
 const authenticate = asyncHandler(async (req, res, next) => {
+  console.log(jwt);
+  console.log(req);
+  console.log(req.cookies);
   const token = req.cookies?.jwt;
 
   if (!token) {
