@@ -26,6 +26,10 @@ const port = process.env.PORT || 5000;
 connectDB();
 
 const app = express();
+app.use((req, res, next) => {
+  console.log("Incoming cookies:", req.cookies);
+  next();
+});
 
 // Middlewares
 app.use(cookieParser());
