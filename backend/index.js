@@ -30,7 +30,6 @@ const app = express();
 // CORS config — must be before routes
 app.use(cors({
   origin: "https://wholesalefrontend-w0sm.onrender.com",
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true
 }));
 
