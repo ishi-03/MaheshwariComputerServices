@@ -24,6 +24,7 @@ const port = process.env.PORT || 5000;
 
 // Connect to MongoDB
 connectDB();
+app.use(cookieParser());
 
 const app = express();
 app.use((req, res, next) => {
@@ -32,7 +33,6 @@ app.use((req, res, next) => {
 });
 
 // Middlewares
-app.use(cookieParser());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
