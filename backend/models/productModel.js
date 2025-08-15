@@ -28,7 +28,7 @@ const productSchema = mongoose.Schema({
   warranty: { type: String, required: true },
   fingerprint: { type: String, required: true, enum: ['Yes', 'No'] },
   dimensions: { type: Number, required: true },
-  C_type:{type: Number, default: 0},
+  C_Type:{type: Number, default: 0},
   HDMI:{type: Number, default: 0},
   USB:{type: Number, default: 0},
   // numReviews: { type: Number, required: true, default: 0 },

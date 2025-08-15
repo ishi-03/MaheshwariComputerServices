@@ -1,48 +1,51 @@
-import path from "path";
 import express from "express";
 import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
 
 const router = express.Router();
+const upload = multer({ dest: "temp/" }); // temp folder before upload
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-
-  filename: (req, file, cb) => {
-    const extname = path.extname(file.originalname);
-    cb(null, `${file.fieldname}-${Date.now()}${extname}`);
-  },
+// Cloudinary config
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const fileFilter = (req, file, cb) => {
-  const filetypes = /jpe?g|png|webp/;
-  const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
+// Upload to Cloudinary route
+router.post("/", upload.array("images", 5), async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "No images uploaded" });
+    }
 
-  const extname = path.extname(file.originalname).toLowerCase();
-  const mimetype = file.mimetype;
+    const uploadResults = await Promise.all(
+      req.files.map(async (file) => {
+        try {
+          const result = await cloudinary.uploader.upload(file.path, {
+            folder: "products",
+          });
+          return { url: result.secure_url, public_id: result.public_id };
+        } finally {
+          // Always remove temp file
+          fs.unlink(file.path, (err) => {
+            if (err) console.error("Temp file delete error:", err);
+          });
+        }
+      })
+    );
 
-  if (filetypes.test(extname) && mimetypes.test(mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error("Images only"), false);
+    res.status(200).json({
+      message: "Images uploaded to Cloudinary successfully",
+      images: uploadResults,
+    });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ message: "Image upload failed", error: err.message });
   }
-};
-
-const upload = multer({ storage, fileFilter });
-
-
-
-router.post("/", upload.array("images", 5), (req, res) => {
-  if (!req.files || req.files.length === 0) {
-    return res.status(400).json({ message: "No images uploaded" });
-  }
-
-  const imagePaths = req.files.map(file => `/${file.path}`);
-  res.status(200).json({
-    message: "Images uploaded successfully",
-    images: imagePaths,
-  });
 });
 
 export default router;

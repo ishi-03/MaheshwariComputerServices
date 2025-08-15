@@ -1,35 +1,7 @@
-import path from "path";
 import fs from "fs-extra";
 import asyncHandler from "../middlewares/asyncHandler.js";
 import Product from "../models/productModel.js";
-
-/*──────────────────────────
-  ⬆️ IMAGE UPLOAD HELPER
-──────────────────────────*/
-// const persistImages = async (tmpPaths) => {
-//   const uploadDir = path.join(path.resolve(), "uploads");
-//   await fs.ensureDir(uploadDir);
-
-//   return Promise.all(
-//     tmpPaths.map(async (tmp) => {
-//       const ext = path.extname(tmp);
-//       const fileName = `image-${Date.now()}-${Math.round(Math.random() * 1e6)}${ext}`;
-//       const dest = path.join(uploadDir, fileName);
-//       await fs.move(tmp, dest, { overwrite: true });
-
-//       // Save full backend URL for production
-//       const backendUrl = process.env.BASE_URL || "https://maheshwaricomputerservices.onrender.com";
-//       return `${backendUrl}/uploads/${fileName}`;
-//     })
-//   );
-// };
-
-let imageUrls = [];
-if (req.files?.images) {
-  imageUrls = Array.isArray(req.files.images)
-    ? req.files.images.map(f => f.path) // Cloudinary URL
-    : [req.files.images.path];
-}
+import cloudinary from "../config/cloudinary.js";
 
 /*──────────────────────────
   ➕ ADD PRODUCT
@@ -59,30 +31,21 @@ const addProduct = asyncHandler(async (req, res) => {
     dimensions,
     detailedDescription,
     stock,
+    portCount
   } = fields;
 
-let portCount = {};
-if (fields.portCount) {
-  try {
-    portCount =
-      typeof fields.portCount === "string"
-        ? JSON.parse(fields.portCount)
-        : fields.portCount;
-  } catch (err) {
-    return res.status(400).json({ error: "Invalid port count format" });
+  // Parse portCount if string
+  let parsedPorts = {};
+  if (portCount) {
+    try {
+      parsedPorts = typeof portCount === "string" ? JSON.parse(portCount) : portCount;
+    } catch {
+      return res.status(400).json({ error: "Invalid port count format" });
+    }
   }
-}
+  const { C_Type, HDMI, USB } = parsedPorts;
 
-console.log("🔧 PORTCOUNT RAW:", fields.portCount);
-console.log("🔧 PORTCOUNT PARSED:", portCount);
-
-const { C_Type, HDMI, USB } = portCount;
-
-console.log("🔧 C_Type:", C_Type);
-console.log("🔧 HDMI:", HDMI);
-console.log("🔧 USB:", USB);
-
-
+  // Upload images to Cloudinary
   let tmpPaths = [];
   if (req.files?.images) {
     tmpPaths = Array.isArray(req.files.images)
@@ -90,29 +53,23 @@ console.log("🔧 USB:", USB);
       : [req.files.images.path];
   }
 
-  const imageUrls = await persistImages(tmpPaths);
+  const imageUrls = await Promise.all(
+    tmpPaths.map(async (tmp) => {
+      const result = await cloudinary.uploader.upload(tmp, { folder: "products" });
+      await fs.remove(tmp); // delete temp file after upload
+      return result.secure_url;
+    })
+  );
 
-  switch (true) {
-    case !name:
-    case !brand:
-    case !description:
-    case !detailedDescription:
-    case !price:
-    case !originalPrice:
-    case !category:
-    case !vendorId:
-    case !purchasePrice:
-    case imageUrls.length === 0:
-    case !screenSize:
-    case !RAM:
-    case !storage:
-    case !weight:
-    case !s_type:
-    case dimensions === undefined || dimensions === null || dimensions === "":
-    case C_Type === undefined || C_Type === null || C_Type === "":
-    case HDMI === undefined || HDMI === null || HDMI === "":
-    case USB === undefined || USB === null || USB === "":
-      return res.status(400).json({ error: "Required fields missing or invalid" });
+  // Validation
+  if (
+    !name || !brand || !description || !detailedDescription ||
+    !price || !originalPrice || !category || !vendorId ||
+    !purchasePrice || imageUrls.length === 0 || !screenSize ||
+    !RAM || !storage || !weight || !s_type || dimensions === undefined ||
+    C_Type === undefined || HDMI === undefined || USB === undefined
+  ) {
+    return res.status(400).json({ error: "Required fields missing or invalid" });
   }
 
   const product = new Product({
@@ -148,10 +105,11 @@ console.log("🔧 USB:", USB);
   res.json(product);
 });
 
-
 /*──────────────────────────
   ✏️ UPDATE PRODUCT
 ──────────────────────────*/
+
+/*──────────────────────────*/
 const updateProductDetails = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -181,24 +139,54 @@ const updateProductDetails = asyncHandler(async (req, res) => {
     warranty,
     fingerprint,
     dimensions,
-    C_type,
-    HDMI,
-    USB,
     stock,
     images,
+    portCount
   } = fields;
 
+  // Parse portCount if provided
+  let parsedPorts = {};
+  if (portCount) {
+    try {
+      parsedPorts = typeof portCount === "string" ? JSON.parse(portCount) : portCount;
+    } catch {
+      return res.status(400).json({ error: "Invalid port count format" });
+    }
+  }
+  const { C_Type, HDMI, USB } = parsedPorts;
+
+  // Keep existing images
+  let updatedImages = Array.isArray(images) ? images : images ? [images] : [];
+
+  // Upload new images if provided
+  if (req.files?.images) {
+    const tmpPaths = Array.isArray(req.files.images)
+      ? req.files.images.map((f) => f.path)
+      : [req.files.images.path];
+
+    const uploadedUrls = await Promise.all(
+      tmpPaths.map(async (tmp) => {
+        const result = await cloudinary.uploader.upload(tmp, { folder: "products" });
+        await fs.remove(tmp); // remove local temp file
+        return result.secure_url;
+      })
+    );
+
+    updatedImages = [...updatedImages, ...uploadedUrls];
+  }
+
+  // Prepare update object
   const updateData = {
     name,
     description,
     detailedDescription,
-    price: Number(price),
-    purchasePrice: Number(purchasePrice),
-    originalPrice: Number(originalPrice),
+    price: price ? Number(price) : undefined,
+    purchasePrice: purchasePrice ? Number(purchasePrice) : undefined,
+    originalPrice: originalPrice ? Number(originalPrice) : undefined,
     brand,
     category,
     screenSize,
-    weight: Number(weight),
+    weight: weight ? Number(weight) : undefined,
     s_type,
     storage,
     RAM,
@@ -208,22 +196,20 @@ const updateProductDetails = asyncHandler(async (req, res) => {
     adapter,
     warranty,
     fingerprint,
-    dimensions: Number(dimensions),
-    C_type: Number(C_type),
-    HDMI: Number(HDMI),
-    USB: Number(USB),
-    stock: Number(stock),
-     images:
-    typeof images === "string"
-      ? [images]
-      : Array.isArray(images)
-      ? images
-      : [],
-};
+    dimensions: dimensions ? Number(dimensions) : undefined,
+    C_Type: C_Type !== undefined ? Number(C_Type) : undefined,
+    HDMI: HDMI !== undefined ? Number(HDMI) : undefined,
+    USB: USB !== undefined ? Number(USB) : undefined,
+    stock: stock ? Number(stock) : undefined,
+    images: updatedImages
+  };
 
-  const product = await Product.findByIdAndUpdate(id, updateData, {
-    new: true,
-  });
+  // Remove undefined fields so they won't overwrite existing values
+  Object.keys(updateData).forEach(
+    (key) => updateData[key] === undefined && delete updateData[key]
+  );
+
+  const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
 
   if (!product) {
     return res.status(404).json({ error: "Product not found" });
@@ -233,31 +219,9 @@ const updateProductDetails = asyncHandler(async (req, res) => {
 });
 
 
-
-
-
 /*──────────────────────────
-  ENUMS, CRUD, REVIEWS (UNCHANGED)
+  ❌ REMOVE PRODUCT
 ──────────────────────────*/
-const getProductEnums = asyncHandler(async (req, res) => {
-  try {
-    res.json({
-      brands: Product.schema.path("brand").enumValues,
-      screenSizes: Product.schema.path("screenSize").enumValues,
-      s_types: Product.schema.path("s_type").enumValues,
-      storage: Product.schema.path("storage").enumValues,
-      RAM: Product.schema.path("RAM").enumValues,
-      colors: Product.schema.path("color").enumValues,
-      keyboards: Product.schema.path("keyboard").enumValues,
-      adapters: Product.schema.path("adapter").enumValues,
-      fingerprints: Product.schema.path("fingerprint").enumValues,
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch enums" });
-  }
-});
-
-
 const removeProduct = asyncHandler(async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -266,30 +230,45 @@ const removeProduct = asyncHandler(async (req, res) => {
       return res.status(404).json({ error: "Product not found" });
     }
 
+    // If product has Cloudinary images
     if (product.images && product.images.length > 0) {
-      for (const imgPath of product.images) {
-        const fullPath = path.join(path.resolve(), imgPath);
+      for (const image of product.images) {
+        // image can be either a string URL or { url, public_id }
+        let publicId;
 
-        try {
-          if (await fs.pathExists(fullPath)) {
-            await fs.remove(fullPath);
-            console.log(`Deleted image: ${fullPath}`);
+        if (typeof image === "string") {
+          // Fallback for old data without public_id
+          const urlParts = image.split("/");
+          const fileName = urlParts[urlParts.length - 1]; // last part after slash
+          const folderName = urlParts[urlParts.length - 2]; // second last part
+          publicId = `${folderName}/${fileName.split(".")[0]}`;
+        } else if (image.public_id) {
+          // Preferred method for new products
+          publicId = image.public_id;
+        }
+
+        if (publicId) {
+          try {
+            await cloudinary.uploader.destroy(publicId);
+            console.log(`✅ Deleted from Cloudinary: ${publicId}`);
+          } catch (err) {
+            console.error(`❌ Error deleting from Cloudinary (${publicId}):`, err);
           }
-        } catch (err) {
-          console.error(`Error deleting image ${fullPath}:`, err);
         }
       }
     }
 
-    // Delete product from database
+    // Delete product from DB
     await product.deleteOne();
-
     res.json({ message: "Product and images deleted successfully" });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
   }
 });
+
+
 
 
 const restockProduct = asyncHandler(async (req, res) => {

@@ -74,7 +74,7 @@ const AdminProductUpdate = () => {
     warranty: "",
     fingerprint: "",
     dimensions: "",
-    C_type: 0,
+    C_Type: 0,
     HDMI: 0,
     USB: 0,
   });
@@ -106,7 +106,7 @@ const AdminProductUpdate = () => {
         warranty: product.warranty || "",
         fingerprint: product.fingerprint || "",
         dimensions: product.dimensions || "",
-        C_type: product.C_type || 0,
+        C_Type: product.C_Type || 0,
         HDMI: product.HDMI || 0,
         USB: product.USB || 0,
       });
