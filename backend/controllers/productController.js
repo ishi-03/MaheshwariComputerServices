@@ -290,22 +290,22 @@ const removeProduct = asyncHandler(async (req, res) => {
     if (product.images?.length) {
       for (const imageUrl of product.images) {
         try {
-          const urlObj = new URL(imageUrl);
-          const pathParts = urlObj.pathname.split("/");
-
-          // Remove first two parts ("", "<folder>") and keep folder/file structure
-          const publicIdWithExt = pathParts.slice(2).join("/");
-          const publicId = publicIdWithExt.replace(/\.[^/.]+$/, "");
+          // Extract public_id from stored URL
+          const publicId = imageUrl
+            .split("/")
+            .slice(-2) // ["products", "upload_xxxxx.png"]
+            .join("/")
+            .replace(/\.[^/.]+$/, ""); // remove file extension
 
           await cloudinary.uploader.destroy(publicId);
-          console.log(`✅ Deleted from Cloudinary: ${publicId}`);
+          console.log(`✅ Deleted image from Cloudinary: ${publicId}`);
         } catch (err) {
           console.error(`❌ Error deleting image from Cloudinary:`, err);
         }
       }
     }
 
-    // ✅ Delete product from MongoDB
+    // ✅ Delete from MongoDB
     await product.deleteOne();
 
     res.json({ message: "Product and images deleted successfully" });
