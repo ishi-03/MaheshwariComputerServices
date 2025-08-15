@@ -6,24 +6,30 @@ import Product from "../models/productModel.js";
 /*──────────────────────────
   ⬆️ IMAGE UPLOAD HELPER
 ──────────────────────────*/
-const persistImages = async (tmpPaths) => {
-  const uploadDir = path.join(path.resolve(), "uploads");
-  await fs.ensureDir(uploadDir);
+// const persistImages = async (tmpPaths) => {
+//   const uploadDir = path.join(path.resolve(), "uploads");
+//   await fs.ensureDir(uploadDir);
 
-  return Promise.all(
-    tmpPaths.map(async (tmp) => {
-      const ext = path.extname(tmp);
-      const fileName = `image-${Date.now()}-${Math.round(Math.random() * 1e6)}${ext}`;
-      const dest = path.join(uploadDir, fileName);
-      await fs.move(tmp, dest, { overwrite: true });
+//   return Promise.all(
+//     tmpPaths.map(async (tmp) => {
+//       const ext = path.extname(tmp);
+//       const fileName = `image-${Date.now()}-${Math.round(Math.random() * 1e6)}${ext}`;
+//       const dest = path.join(uploadDir, fileName);
+//       await fs.move(tmp, dest, { overwrite: true });
 
-      // Save full backend URL for production
-      const backendUrl = process.env.BASE_URL || "https://maheshwaricomputerservices.onrender.com";
-      return `${backendUrl}/uploads/${fileName}`;
-    })
-  );
-};
+//       // Save full backend URL for production
+//       const backendUrl = process.env.BASE_URL || "https://maheshwaricomputerservices.onrender.com";
+//       return `${backendUrl}/uploads/${fileName}`;
+//     })
+//   );
+// };
 
+let imageUrls = [];
+if (req.files?.images) {
+  imageUrls = Array.isArray(req.files.images)
+    ? req.files.images.map(f => f.path) // Cloudinary URL
+    : [req.files.images.path];
+}
 
 /*──────────────────────────
   ➕ ADD PRODUCT
