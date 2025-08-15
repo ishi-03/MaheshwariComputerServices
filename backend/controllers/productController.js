@@ -6,10 +6,7 @@ import cloudinary from "../config/cloudinary.js";
 /*──────────────────────────
   ➕ ADD PRODUCT
 ──────────────────────────*/
-import asyncHandler from "express-async-handler";
-import fs from "fs-extra";
-import cloudinary from "../config/cloudinary.js"; // Make sure you have cloudinary config imported
-import Product from "../models/productModel.js";
+
 
 const addProduct = asyncHandler(async (req, res) => {
   const fields = req.fields;
