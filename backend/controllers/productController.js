@@ -2,11 +2,16 @@ import fs from "fs-extra";
 import asyncHandler from "../middlewares/asyncHandler.js";
 import Product from "../models/productModel.js";
 import cloudinary from "../config/cloudinary.js";
+/*──────────────────────────
+  ⬆️ IMAGE UPLOAD HELPER
+──────────────────────────*/
+
+
+
 
 /*──────────────────────────
   ➕ ADD PRODUCT
 ──────────────────────────*/
-
 
 const addProduct = asyncHandler(async (req, res) => {
   const fields = req.fields;
@@ -56,18 +61,22 @@ const addProduct = asyncHandler(async (req, res) => {
   }
 
   // Upload to Cloudinary
-  const imageUrls = await Promise.all(
-    tmpPaths.map(async (tmp) => {
+const imageUrls = await Promise.all(
+  tmpPaths.map(async (tmp) => {
+    try {
       const result = await cloudinary.uploader.upload(tmp, {
         folder: "products",
         use_filename: true,
         unique_filename: false,
         overwrite: true
       });
-      await fs.remove(tmp); // Clean up temp file
       return result.secure_url;
-    })
-  );
+    } finally {
+      await fs.remove(tmp);
+    }
+  })
+);
+
 
   // Validation
   if (
@@ -116,11 +125,12 @@ const addProduct = asyncHandler(async (req, res) => {
 
 
 
+
+
 /*──────────────────────────
   ✏️ UPDATE PRODUCT
 ──────────────────────────*/
 
-/*──────────────────────────*/
 const updateProductDetails = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -129,6 +139,8 @@ const updateProductDetails = asyncHandler(async (req, res) => {
   }
 
   const fields = req.fields;
+  const files = req.files;
+
   const {
     name,
     description,
@@ -150,54 +162,71 @@ const updateProductDetails = asyncHandler(async (req, res) => {
     warranty,
     fingerprint,
     dimensions,
+    C_Type,
+    HDMI,
+    USB,
     stock,
-    images,
-    portCount
   } = fields;
 
-  // Parse portCount if provided
-  let parsedPorts = {};
-  if (portCount) {
-    try {
-      parsedPorts = typeof portCount === "string" ? JSON.parse(portCount) : portCount;
-    } catch {
-      return res.status(400).json({ error: "Invalid port count format" });
-    }
+  // Find existing product
+  const existingProduct = await Product.findById(id);
+  if (!existingProduct) {
+    return res.status(404).json({ error: "Product not found" });
   }
-  const { C_Type, HDMI, USB } = parsedPorts;
 
-  // Keep existing images
-  let updatedImages = Array.isArray(images) ? images : images ? [images] : [];
+  let images = existingProduct.images || [];
 
-  // Upload new images if provided
-  if (req.files?.images) {
-    const tmpPaths = Array.isArray(req.files.images)
-      ? req.files.images.map((f) => f.path)
-      : [req.files.images.path];
+  // If new images uploaded
+  if (files?.images) {
+    // Delete all old images from Cloudinary
+    for (const imageUrl of images) {
+      try {
+        const urlObj = new URL(imageUrl);
+        const pathParts = urlObj.pathname.split("/");
 
-    const uploadedUrls = await Promise.all(
+        // Skip first 2 segments ("", "folder") to keep the Cloudinary folder structure
+        const publicIdWithExt = pathParts.slice(2).join("/");
+        const publicId = publicIdWithExt.replace(/\.[^/.]+$/, "");
+
+        await cloudinary.uploader.destroy(publicId);
+        console.log(`✅ Deleted old image: ${publicId}`);
+      } catch (err) {
+        console.error("❌ Error deleting old image:", err);
+      }
+    }
+
+    // Collect tmp paths
+    const tmpPaths = Array.isArray(files.images)
+      ? files.images.map((f) => f.path)
+      : [files.images.path];
+
+    // Upload new images
+    images = await Promise.all(
       tmpPaths.map(async (tmp) => {
-        const result = await cloudinary.uploader.upload(tmp, { folder: "products" });
-        await fs.remove(tmp); // remove local temp file
+        const result = await cloudinary.uploader.upload(tmp, {
+          folder: "products",
+          use_filename: true,
+          unique_filename: false,
+          overwrite: true
+        });
+        await fs.remove(tmp);
         return result.secure_url;
       })
     );
-
-    updatedImages = [...updatedImages, ...uploadedUrls];
   }
 
-  // Prepare update object
+  // Prepare update data
   const updateData = {
     name,
     description,
     detailedDescription,
-    price: price ? Number(price) : undefined,
-    purchasePrice: purchasePrice ? Number(purchasePrice) : undefined,
-    originalPrice: originalPrice ? Number(originalPrice) : undefined,
+    price: Number(price),
+    purchasePrice: Number(purchasePrice),
+    originalPrice: Number(originalPrice),
     brand,
     category,
     screenSize,
-    weight: weight ? Number(weight) : undefined,
+    weight: Number(weight),
     s_type,
     storage,
     RAM,
@@ -207,32 +236,48 @@ const updateProductDetails = asyncHandler(async (req, res) => {
     adapter,
     warranty,
     fingerprint,
-    dimensions: dimensions ? Number(dimensions) : undefined,
-    C_Type: C_Type !== undefined ? Number(C_Type) : undefined,
-    HDMI: HDMI !== undefined ? Number(HDMI) : undefined,
-    USB: USB !== undefined ? Number(USB) : undefined,
-    stock: stock ? Number(stock) : undefined,
-    images: updatedImages
+    dimensions: Number(dimensions),
+    C_Type: Number(C_Type),
+    HDMI: Number(HDMI),
+    USB: Number(USB),
+    stock: Number(stock),
+    images, // updated images array
   };
 
-  // Remove undefined fields so they won't overwrite existing values
-  Object.keys(updateData).forEach(
-    (key) => updateData[key] === undefined && delete updateData[key]
-  );
-
+  // Update product
   const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
-
-  if (!product) {
-    return res.status(404).json({ error: "Product not found" });
-  }
 
   res.json(product);
 });
 
 
+
+
+
+
+
 /*──────────────────────────
-  ❌ REMOVE PRODUCT
+  ENUMS, CRUD, REVIEWS (UNCHANGED)
 ──────────────────────────*/
+const getProductEnums = asyncHandler(async (req, res) => {
+  try {
+    res.json({
+      brands: Product.schema.path("brand").enumValues,
+      screenSizes: Product.schema.path("screenSize").enumValues,
+      s_types: Product.schema.path("s_type").enumValues,
+      storage: Product.schema.path("storage").enumValues,
+      RAM: Product.schema.path("RAM").enumValues,
+      colors: Product.schema.path("color").enumValues,
+      keyboards: Product.schema.path("keyboard").enumValues,
+      adapters: Product.schema.path("adapter").enumValues,
+      fingerprints: Product.schema.path("fingerprint").enumValues,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch enums" });
+  }
+});
+
+
 const removeProduct = asyncHandler(async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -241,38 +286,29 @@ const removeProduct = asyncHandler(async (req, res) => {
       return res.status(404).json({ error: "Product not found" });
     }
 
-    // If product has Cloudinary images
-    if (product.images && product.images.length > 0) {
-      for (const image of product.images) {
-        // image can be either a string URL or { url, public_id }
-        let publicId;
+    // ✅ Delete each image from Cloudinary
+    if (product.images?.length) {
+      for (const imageUrl of product.images) {
+        try {
+          const urlObj = new URL(imageUrl);
+          const pathParts = urlObj.pathname.split("/");
 
-        if (typeof image === "string") {
-          // Fallback for old data without public_id
-          const urlParts = image.split("/");
-          const fileName = urlParts[urlParts.length - 1]; // last part after slash
-          const folderName = urlParts[urlParts.length - 2]; // second last part
-          publicId = `${folderName}/${fileName.split(".")[0]}`;
-        } else if (image.public_id) {
-          // Preferred method for new products
-          publicId = image.public_id;
-        }
+          // Remove first two parts ("", "<folder>") and keep folder/file structure
+          const publicIdWithExt = pathParts.slice(2).join("/");
+          const publicId = publicIdWithExt.replace(/\.[^/.]+$/, "");
 
-        if (publicId) {
-          try {
-            await cloudinary.uploader.destroy(publicId);
-            console.log(`✅ Deleted from Cloudinary: ${publicId}`);
-          } catch (err) {
-            console.error(`❌ Error deleting from Cloudinary (${publicId}):`, err);
-          }
+          await cloudinary.uploader.destroy(publicId);
+          console.log(`✅ Deleted from Cloudinary: ${publicId}`);
+        } catch (err) {
+          console.error(`❌ Error deleting image from Cloudinary:`, err);
         }
       }
     }
 
-    // Delete product from DB
+    // ✅ Delete product from MongoDB
     await product.deleteOne();
-    res.json({ message: "Product and images deleted successfully" });
 
+    res.json({ message: "Product and images deleted successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
