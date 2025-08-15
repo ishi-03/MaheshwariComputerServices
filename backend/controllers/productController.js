@@ -6,6 +6,11 @@ import cloudinary from "../config/cloudinary.js";
 /*──────────────────────────
   ➕ ADD PRODUCT
 ──────────────────────────*/
+import asyncHandler from "express-async-handler";
+import fs from "fs-extra";
+import cloudinary from "../config/cloudinary.js"; // Make sure you have cloudinary config imported
+import Product from "../models/productModel.js";
+
 const addProduct = asyncHandler(async (req, res) => {
   const fields = req.fields;
   const {
@@ -34,7 +39,7 @@ const addProduct = asyncHandler(async (req, res) => {
     portCount
   } = fields;
 
-  // Parse portCount if string
+  // Parse portCount safely
   let parsedPorts = {};
   if (portCount) {
     try {
@@ -45,7 +50,7 @@ const addProduct = asyncHandler(async (req, res) => {
   }
   const { C_Type, HDMI, USB } = parsedPorts;
 
-  // Upload images to Cloudinary
+  // Collect tmp file paths
   let tmpPaths = [];
   if (req.files?.images) {
     tmpPaths = Array.isArray(req.files.images)
@@ -53,10 +58,16 @@ const addProduct = asyncHandler(async (req, res) => {
       : [req.files.images.path];
   }
 
+  // Upload to Cloudinary
   const imageUrls = await Promise.all(
     tmpPaths.map(async (tmp) => {
-      const result = await cloudinary.uploader.upload(tmp, { folder: "products" });
-      await fs.remove(tmp); // delete temp file after upload
+      const result = await cloudinary.uploader.upload(tmp, {
+        folder: "products",
+        use_filename: true,
+        unique_filename: false,
+        overwrite: true
+      });
+      await fs.remove(tmp); // Clean up temp file
       return result.secure_url;
     })
   );
@@ -72,6 +83,7 @@ const addProduct = asyncHandler(async (req, res) => {
     return res.status(400).json({ error: "Required fields missing or invalid" });
   }
 
+  // Create product
   const product = new Product({
     name,
     description,
@@ -98,12 +110,14 @@ const addProduct = asyncHandler(async (req, res) => {
     C_Type: Number(C_Type) || 0,
     HDMI: Number(HDMI) || 0,
     USB: Number(USB) || 0,
-    stock: Number(stock),
+    stock: Number(stock) || 0,
   });
 
   await product.save();
-  res.json(product);
+  res.status(201).json(product);
 });
+
+
 
 /*──────────────────────────
   ✏️ UPDATE PRODUCT
