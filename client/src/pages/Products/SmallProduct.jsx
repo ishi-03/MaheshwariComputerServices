@@ -72,15 +72,15 @@ const SmallProduct = ({ product }) => {
         {/* Price Section */}
         <div className="flex items-baseline space-x-2">
           <span className="text-2xl font-bold text-red-600">
-            ${product.price}
+            ₹ {product.price}
           </span>
           {product.originalPrice && product.originalPrice > product.price && (
             <>
               <span className="text-sm text-gray-400 line-through">
-                ${product.originalPrice}
+                ₹ {product.originalPrice}
               </span>
               <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full font-medium">
-                Save ${(product.originalPrice - product.price).toFixed(2)}
+                Save ₹ {(product.originalPrice - product.price).toFixed(2)}
               </span>
             </>
           )}

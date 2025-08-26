@@ -40,7 +40,7 @@ const ProductCarousel = () => {
               />
               <div className="mt-4 text-red-700">
                 <h2 className="text-2xl font-bold mb-1">{product.name}</h2>
-                <p className="text-lg mb-3">$ {product.price}</p>
+                <p className="text-lg mb-3">₹ {product.price}</p>
                 <p className="text-gray-700 mb-4">
                   {product.description.substring(0, 140)}...
                 </p>

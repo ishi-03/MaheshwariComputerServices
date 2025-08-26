@@ -118,11 +118,11 @@ const PlaceOrder = () => {
                             <span className="text-sm text-gray-900 font-medium">{item.qty}</span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-sm text-gray-900">${item.price.toFixed(2)}</span>
+                            <span className="text-sm text-gray-900">₹{item.price.toFixed(2)}</span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className="text-sm font-medium text-gray-900">
-                              ${(+item.qty * +item.price).toFixed(2)}
+                              ₹ {(+item.qty * +item.price).toFixed(2)}
                             </span>
                           </td>
                         </tr>
@@ -174,20 +174,20 @@ const PlaceOrder = () => {
                 <div className="p-6 space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Items</span>
-                    <span className="font-medium">${cart.itemsPrice}</span>
+                    <span className="font-medium">₹{cart.itemsPrice}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Shipping</span>
-                    <span className="font-medium">${cart.shippingPrice}</span>
+                    <span className="font-medium">₹{cart.shippingPrice}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Tax</span>
-                    <span className="font-medium">${cart.taxPrice}</span>
+                    <span className="font-medium">₹{cart.taxPrice}</span>
                   </div>
                   <div className="border-t border-gray-200 pt-4">
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-semibold text-gray-900">Total</span>
-                      <span className="text-lg font-bold text-red-600">${cart.totalPrice}</span>
+                      <span className="text-lg font-bold text-red-600">₹{cart.totalPrice}</span>
                     </div>
                   </div>
                 </div>

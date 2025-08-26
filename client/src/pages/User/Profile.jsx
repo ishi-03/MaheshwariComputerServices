@@ -232,7 +232,7 @@ const Profile = () => {
                 <tr key={order._id} className="border-t">
                   <td className="p-2 border">{order._id}</td>
                   <td className="p-2 border">{order.createdAt.substring(0, 10)}</td>
-                  <td className="p-2 border">$ {order.totalPrice}</td>
+                  <td className="p-2 border">₹ {order.totalPrice}</td>
                   <td className="p-2 border">
                     {order.isPaid ? (
                       <span className="text-green-600">Yes</span>

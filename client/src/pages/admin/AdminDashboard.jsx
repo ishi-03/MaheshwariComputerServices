@@ -124,7 +124,7 @@ const AdminDashboard = () => {
       },
       yaxis: {
         title: {
-          text: "Sales ($)",
+          text: "Sales (₹)",
           style: {
             fontSize: '16px',
             fontWeight: '600',
@@ -202,7 +202,7 @@ const AdminDashboard = () => {
                     </div>
                   ) : (
                     <p className="text-2xl font-bold text-gray-900">
-                      ${sales?.totalSales?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
+                      ₹ {sales?.totalSales?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
                     </p>
                   )}
                 </div>
