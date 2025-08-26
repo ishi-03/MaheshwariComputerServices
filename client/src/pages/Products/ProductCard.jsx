@@ -18,82 +18,67 @@ const ProductCard = ({ p }) => {
   };
 
   // Calculate MRP (60% higher than price)
-  const originalPrice = p.originalPrice;
-  const discountPercentage = Math.round(((originalPrice - p.price) / originalPrice) * 100);
+const originalPrice = p.originalPrice;
+const discountPercentage = Math.round(((originalPrice - p.price) / originalPrice) * 100);
 
   return (
-    <div className="group bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden w-full max-w-md mx-auto relative border border-gray-50 hover:border-red-100 hover:-translate-y-2">
-      {/* Premium Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-red-50/30 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-      
+    <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden max-w-sm relative border border-gray-100 hover:border-red-200">
       {/* Tag */}
       {p?.tag && (
-        <span className="absolute top-4 left-4 bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white text-xs font-bold px-4 py-2 rounded-full z-20 shadow-lg backdrop-blur-sm border border-red-400/20">
-          <span className="relative z-10">{p.tag}</span>
-          <div className="absolute inset-0 bg-white/10 rounded-full"></div>
+        <span className="absolute top-3 left-3 bg-gradient-to-r from-red-600 to-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-full z-10 shadow-md">
+          {p.tag}
         </span>
       )}
 
       {/* Discount Badge */}
-      <span className="absolute top-4 right-16 bg-gradient-to-r from-red-600 to-red-700 text-white text-sm font-bold px-3 py-2 rounded-full z-20 shadow-lg border-2 border-white/20">
+      <span className="absolute top-3 right-14 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
         -{discountPercentage}%
       </span>
 
       {/* Wishlist Icon */}
-      <div className="absolute top-4 right-4 z-20 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg border border-gray-100">
+      <div className="absolute top-3 right-3 z-10">
         <HeartIcon product={p} />
       </div>
 
-      {/* Product Image Container */}
-      <Link to={`/product/${p._id}`} className="block relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="relative h-64 overflow-hidden">
-          <img
-            src={p.images?.[0]}
-            alt={p.name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          
-          {/* Overlay on hover */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/10 backdrop-blur-[1px]">
-            <div className="bg-white/95 backdrop-blur-sm rounded-full p-3 shadow-xl border border-gray-200 transform scale-75 group-hover:scale-100 transition-transform duration-300">
-              <AiOutlineEye className="text-red-600" size={24} />
-            </div>
-          </div>
-        </div>
+      {/* Product Image */}
+      <Link to={`/product/${p._id}`} className="block relative overflow-hidden">
+        <img
+          src={p.images?.[0]}
+          alt={p.name}
+          className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
       </Link>
 
-      <div className="p-6 relative z-10">
+      <div className="p-5">
         {/* Category */}
-        <div className="mb-3">
-          <span className="text-xs text-red-700 uppercase font-bold tracking-wider bg-red-50 px-3 py-1.5 rounded-full inline-block border border-red-100 shadow-sm">
-            {p.category || "High-Performance Laptop"}
-          </span>
-        </div>
+        <p className="text-xs text-red-600 uppercase font-bold tracking-wider mb-2 bg-red-50 px-2 py-1 rounded-md inline-block">
+          {p.category || "High-Performance Laptop"}
+        </p>
 
         {/* Name */}
-        <h2 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 min-h-[3.5rem] leading-tight">
+        <h2 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 min-h-[3.5rem]">
           {p.name}
         </h2>
 
         {/* Description */}
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3 min-h-[3.75rem] leading-relaxed">
-          {p.description?.substring(0, 120)}...
+        <p className="text-gray-600 text-sm mb-3 line-clamp-2 min-h-[2.5rem]">
+          {p.description?.substring(0, 80)}...
         </p>
 
         {/* Feature Badges */}
         {p.features && p.features.length > 0 && (
-          <div className="flex gap-2 flex-wrap text-xs mb-5">
+          <div className="flex gap-1 flex-wrap text-xs mb-4">
             {p.features?.slice(0, 3).map((feature, i) => (
               <span
                 key={i}
-                className="bg-gray-50 text-gray-700 px-3 py-1.5 rounded-full border border-gray-200 font-medium hover:bg-gray-100 transition-colors duration-200"
+                className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full border"
               >
                 {feature}
               </span>
             ))}
             {p.features.length > 3 && (
-              <span className="bg-red-50 text-red-700 px-3 py-1.5 rounded-full border border-red-200 font-semibold">
+              <span className="bg-red-50 text-red-600 px-2 py-1 rounded-full border border-red-200">
                 +{p.features.length - 3} more
               </span>
             )}
@@ -101,68 +86,56 @@ const ProductCard = ({ p }) => {
         )}
 
         {/* Price Section */}
-        <div className="mb-5 p-4 bg-gradient-to-r from-gray-50 to-red-50/30 rounded-2xl border border-gray-100">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-3">
-              <p className="text-sm line-through text-gray-500 font-medium">
-                ₹{originalPrice.toLocaleString("en-IN")}
-              </p>
-              <span className="text-xs text-red-700 font-bold bg-red-100 px-2 py-1 rounded-md border border-red-200">
-                Save ₹{(originalPrice - p.price).toLocaleString("en-IN")}
-              </span>
-            </div>
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <p className="text-sm line-through text-gray-400">
+              ₹{originalPrice.toLocaleString("en-IN")}
+            </p>
+            <span className="text-xs text-red-600 font-semibold bg-red-50 px-2 py-0.5 rounded">
+              Save ₹{(originalPrice - p.price).toLocaleString("en-IN")}
+            </span>
           </div>
-          <p className="text-3xl font-bold text-gray-900 tracking-tight">
+          <p className="text-2xl font-bold text-gray-900">
             ₹{p.price.toLocaleString("en-IN")}
           </p>
         </div>
 
-        {/* Reviews and Stock */}
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
-          <div className="flex items-center gap-3">
+        {/* Reviews */}
+        <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
+          <div className="flex items-center gap-2">
             <div className="flex text-yellow-400">
               {Array.from({ length: 5 }).map((_, i) => (
-                <FaStar key={i} size={16} className="drop-shadow-sm" />
+                <FaStar key={i} size={14} />
               ))}
             </div>
-            <p className="text-sm text-gray-600 font-medium">({p.reviews?.length || 0} reviews)</p>
+            <p className="text-sm text-gray-600">({p.reviews?.length || 0})</p>
           </div>
           {p.stock > 0 ? (
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <p className="text-green-700 font-bold text-sm">In Stock</p>
-            </div>
+            <p className="text-green-600 font-semibold text-sm">In Stock</p>
           ) : (
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-              <p className="text-red-700 font-bold text-sm">Out of Stock</p>
-            </div>
+            <p className="text-red-600 font-semibold text-sm">Out of Stock</p>
           )}
         </div>
 
         {/* Action Buttons */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           {/* Add to Cart Button */}
           <button
-            className="w-full bg-gradient-to-r from-red-600 via-red-700 to-red-800 hover:from-red-700 hover:via-red-800 hover:to-red-900 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden group/button"
+            className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={() => addToCartHandler(p, 1)}
             disabled={p.stock === 0}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover/button:translate-x-[100%] transition-transform duration-1000"></div>
-            <AiOutlineShoppingCart size={20} className="relative z-10" />
-            <span className="relative z-10">
-              {p.stock === 0 ? "Out of Stock" : "Add to Cart"}
-            </span>
+            <AiOutlineShoppingCart size={18} />
+            {p.stock === 0 ? "Out of Stock" : "Add to Cart"}
           </button>
 
           {/* View Details Button */}
           <Link
             to={`/product/${p._id}`}
-            className="w-full bg-white border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg relative overflow-hidden group/link"
+            className="w-full bg-white border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-[1.02]"
           >
-            <div className="absolute inset-0 bg-red-600 translate-x-[-100%] group-hover/link:translate-x-0 transition-transform duration-300 ease-out"></div>
-            <AiOutlineEye size={20} className="relative z-10" />
-            <span className="relative z-10">View Details</span>
+            <AiOutlineEye size={18} />
+            View Details
           </Link>
         </div>
       </div>
