@@ -28,15 +28,29 @@ connectDB();
 const app = express();
 
 // CORS config — must be before routes
+const allowedOrigins = [
+  "https://www.refurbbazar.com",  // ✅ your Namecheap domain
+  "https://refurbbazar.com",      // ✅ non-www version (optional, good to add)
+  "http://localhost:3000"         // ✅ local dev (optional)
+];
+
 app.use(cors({
-  origin: "https://wholesalefrontend-w0sm.onrender.com",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true
 }));
+
 app.options("*", cors({
-  origin: "https://wholesalefrontend-w0sm.onrender.com",
+  origin: allowedOrigins,
   credentials: true
 }));
+
 
 // Parse cookies before routes
 app.use(cookieParser());
