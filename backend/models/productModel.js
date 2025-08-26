@@ -37,7 +37,10 @@ const productSchema = mongoose.Schema({
   category: { type: ObjectId, ref: "Category", required: true },
   stock: { type: Number, required: true, default: 0 },
   // rating: { type: Number, required: true, default: 0 },
-  reviews: [reviewSchema],
+reviews: {
+  type: [reviewSchema],
+  default: []
+},
 }, { timestamps: true });
 
 const Product = mongoose.model("Product", productSchema);

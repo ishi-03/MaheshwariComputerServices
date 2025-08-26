@@ -22,7 +22,7 @@ const ProductCard = ({ p }) => {
   const discountPercentage = Math.round(((originalPrice - p.price) / originalPrice) * 100);
 
   return (
-    <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden w-full max-w-md relative border border-gray-200 hover:border-red-300 backdrop-blur-sm">
+    <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden w-full max-w-lg relative border border-gray-200 hover:border-red-300 backdrop-blur-sm">
       {/* Tag */}
       {p?.tag && (
         <span className="absolute top-4 left-4 bg-gradient-to-r from-red-600 to-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-full z-10 shadow-lg">
@@ -50,9 +50,9 @@ const ProductCard = ({ p }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       </Link>
 
-      <div className="p-6">
+              <div className="p-8">
         {/* Category */}
-        <p className="text-xs text-red-700 uppercase font-bold tracking-wider mb-3 bg-gradient-to-r from-red-50 to-red-100 px-3 py-1.5 rounded-lg inline-block border border-red-200">
+        <p className="text-xs text-red-700 uppercase font-bold tracking-wider mb-3 bg-red-50 px-4 py-2 rounded-lg inline-block border border-red-200">
           {p.category || "High-Performance Laptop"}
         </p>
 
@@ -69,17 +69,17 @@ const ProductCard = ({ p }) => {
         {/* Feature Badges */}
         {p.features && p.features.length > 0 && (
           <div className="flex gap-2 flex-wrap text-xs mb-5">
-            {p.features?.slice(0, 3).map((feature, i) => (
+            {p.features?.slice(0, 4).map((feature, i) => (
               <span
                 key={i}
-                className="bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 px-3 py-1.5 rounded-full border border-gray-300 hover:shadow-md transition-shadow duration-200"
+                className="bg-red-50 text-red-700 px-3 py-1.5 rounded-full border border-red-200 hover:bg-red-100 transition-colors duration-200"
               >
                 {feature}
               </span>
             ))}
-            {p.features.length > 3 && (
-              <span className="bg-gradient-to-r from-red-50 to-red-100 text-red-700 px-3 py-1.5 rounded-full border border-red-300 hover:shadow-md transition-shadow duration-200">
-                +{p.features.length - 3} more
+            {p.features.length > 4 && (
+              <span className="bg-red-600 text-white px-3 py-1.5 rounded-full border border-red-600 hover:bg-red-700 transition-colors duration-200">
+                +{p.features.length - 4} more
               </span>
             )}
           </div>
